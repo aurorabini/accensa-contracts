@@ -1339,7 +1339,7 @@ fn test_refund_to_contract_address_fails_self_transfer() {
     // No refund event emitted for the contract
     let events = env.events().all().filter_by_contract(&client.address);
     // Only the deposit event should exist
-    assert_eq!(events.to_vec().len(), 1);
+    assert_eq!(events.events().len(), 1);
 }
 
 #[test]
@@ -1353,7 +1353,7 @@ fn test_withdraw_to_contract_address_fails_self_transfer() {
 
     // Only the deposit event should exist
     let events = env.events().all().filter_by_contract(&client.address);
-    assert_eq!(events.to_vec().len(), 1);
+    assert_eq!(events.events().len(), 1);
 }
 
 #[test]
