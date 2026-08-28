@@ -504,9 +504,13 @@ impl RefundVault {
             .instance()
             .get(&DataKey::RefundWindow)
             .unwrap();
+        let current_ledger = env.ledger().sequence();
+        if paid_at_ledger > current_ledger {
+            return Err(Error::WindowExpired);
+        }
         if window > 0 {
-            let current_ledger = env.ledger().sequence();
-            if current_ledger > paid_at_ledger + window {
+            let expiry_ledger = paid_at_ledger.saturating_add(window);
+            if current_ledger > expiry_ledger {
                 return Err(Error::WindowExpired);
             }
         }

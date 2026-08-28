@@ -103,6 +103,25 @@ fn test_partial_refunds_cumulative_within_ceiling() {
 }
 
 #[test]
+fn test_future_paid_at_ledger_fails() {
+    let (env, client, merchant, _token) = setup(100);
+    client.deposit(&merchant, &500_000);
+
+    let payment_ref = BytesN::from_array(&env, &[8u8; 32]);
+    let buyer = Address::generate(&env);
+    assert_eq!(
+        client.try_refund(
+            &payment_ref,
+            &buyer,
+            &100,
+            &(env.ledger().sequence() + 1),
+            &100,
+        ),
+        Err(Ok(Error::WindowExpired))
+    );
+}
+
+#[test]
 fn test_refund_outside_window_fails() {
     let (env, client, merchant, _token) = setup(100);
     client.deposit(&merchant, &500_000);
