@@ -2,7 +2,7 @@
 
 use super::*;
 use soroban_sdk::{
-    testutils::{storage::Persistent as _, Address as _, Ledger},
+    testutils::{storage::Persistent as _, Address as _, Events as _, Ledger},
     token::{StellarAssetClient, TokenClient},
     vec, Address, Env,
 };
@@ -1339,7 +1339,7 @@ fn test_refund_to_contract_address_fails_self_transfer() {
     // No refund event emitted for the contract
     let events = env.events().all().filter_by_contract(&client.address);
     // Only the deposit event should exist
-    assert_eq!(events.len(), 1);
+    assert_eq!(events.to_vec().len(), 1);
 }
 
 #[test]
@@ -1353,7 +1353,7 @@ fn test_withdraw_to_contract_address_fails_self_transfer() {
 
     // Only the deposit event should exist
     let events = env.events().all().filter_by_contract(&client.address);
-    assert_eq!(events.len(), 1);
+    assert_eq!(events.to_vec().len(), 1);
 }
 
 #[test]
@@ -1410,7 +1410,7 @@ fn test_set_token_fails_when_vault_is_funded() {
 #[test]
 fn test_set_token_requires_admin_auth() {
     let (env, client, _merchant, _token) = setup(100);
-    let stranger = Address::generate(&env);
+    let _stranger = Address::generate(&env);
 
     let new_token_admin = Address::generate(&env);
     let new_sac = env.register_stellar_asset_contract_v2(new_token_admin);
